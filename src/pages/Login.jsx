@@ -14,6 +14,48 @@ const Login = (props) => {
 
     const navigate=useNavigate();
 
+    
+
+  let submitHandler=async(event)=>{
+
+    event.preventDefault();
+    try {
+      
+   
+  let response=await fetch(`https://project-backend-mbiw.vercel.app/api/auth/signin`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+    },
+    body:JSON.stringify(FormData),
+  })
+ const data=await response.json();
+
+
+  
+ 
+  if (response.ok) {
+   
+    setIsLoggedIn(true);
+    toast.success("Logged In Successfully");
+    navigate("/dashboard");
+} else {
+   
+    toast.error(data.error||"Password Or Email is incorrect");
+}
+} 
+  
+   
+
+
+  
+ catch (error) {
+      console.log("signin",error)
+}
+
+
+}
+
     function changeHandler(e){
         const{name,value,type}=e.target 
         setFormData(prevFormData=>{
@@ -24,13 +66,13 @@ const Login = (props) => {
         });
     }
 
-    function submitHandler(event){
-        event.preventDefault();
-        setIsLoggedIn(true);
-        toast.success("Logged In")
-        navigate("/dashboard")
+    // function submitHandler(event){
+    //     event.preventDefault();
+    //     setIsLoggedIn(true);
+    //     toast.success("Logged In")
+    //     navigate("/dashboard")
 
-    }
+    // }
   return (
   <div className='flex bg-black'> 
 
@@ -44,7 +86,7 @@ const Login = (props) => {
       <form onSubmit={submitHandler} className='text-white'>
         <label htmlFor="username">Username<sup className='text-red-700'>*</sup></label>
           <input 
-          required
+         
           type="text"
           placeholder="Enter Your UserName"
           name="username"

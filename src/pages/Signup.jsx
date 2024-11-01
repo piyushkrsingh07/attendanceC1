@@ -9,26 +9,62 @@ import { FcGoogle } from "react-icons/fc";
 
 const Signup = (props) => {
 
-    const[FormData,setFormData]=useState({FirstName:"",LastName:"",email:"",password:"",confirmpassword:""})
+    const[FormData,setFormData]=useState({name:"",email:"",password:"",confirmpassword:""})
     const[showPassword,setshowPassword]=useState(true)
     const[showPassword2,setshowPassword2]=useState(true)
     let setIsLoggedIn=props.setIsLoggedIn;
 
     const navigate=useNavigate();
 
-    function submitHandler(event){
-        event.preventDefault();
+    let submitHandler = async(event) =>{
+      event.preventDefault();
+      try{
+
+      
+      let response=await fetch(`https://project-backend-mbiw.vercel.app/api/auth/signup`,{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+        },
+        body:JSON.stringify(FormData),
+      })
+    const data=await response.json()
+
+          if(response.ok){
         if(FormData.password != FormData.confirmpassword)
-        {
+          {
           toast.error("Password mismatch")
           return;
         }
         else{
-         console.log(FormData)
-        setIsLoggedIn(true);
-        toast.success("Account Successfully Created")
+         
+    setIsLoggedIn(true);
+      
+    toast.success("Account Successfully Created")
         navigate("/dashboard")
         }
+      }
+      else{
+      toast.error(data.error||"Recheck email or password")
+      }
+       
+
+      
+    }
+    catch(error){
+      console.log("signup",error)
+    }
+         //    if(FormData.password != FormData.confirmpassword)
+      //    {
+      //    toast.error("Password mismatch")
+      //    return;
+      //  }
+      //   // else{
+      //   console.log(FormData)
+      //   setIsLoggedIn(true);
+      //   toast.success("Account Successfully Created")
+      //    navigate("/dashboard")
+      //   }
 
     }
 
@@ -46,25 +82,25 @@ const Signup = (props) => {
         <div>
           <img src="https://ucarecdn.com/ba7721e5-2943-429b-892d-a6134ea133f6/-/preview/982x1000/" alt="" className='w-[800px] h-[550px]'/>
         </div>
-      <div className='flex flex-col gap-y-5  pl-[40px] mt-[70px] bg-gray-500 pr-[20px] rounded-md h-[560px] mx-auto'>
+      <div className='flex flex-col gap-y-5  pl-[40px] mt-[70px] bg-gray-500 pr-[20px] rounded-md h-[480px] mx-auto'>
       <form onSubmit={submitHandler} className='text-white'>
         <h1 className='text-white mt-1 font-bold ml-5 mb-4'>Create Your Account</h1>
-         <label htmlFor="FirstName" >First Name<sup className='text-red-700'>*</sup></label>
+         <label htmlFor="name" >Name<sup className='text-red-700'>*</sup></label>
          <br />
          <input 
          required
          type="text"
-         name="FirstName" 
-         id="FirstName"
-         placeholder="Enter Your First Name"
-         value={FormData.FirstName}
+         name="name" 
+         id="name"
+         placeholder="Enter Your Name"
+         value={FormData.name}
          onChange={changeHandler}
-         pattern="[a-zA-Z]*"
+         pattern="[a-zA-Z ]*"
           className='bg-black px-1 py-1 rounded-sm '
          />
          <br />
          <br />
-         <label htmlFor="">Last Name<sup className='text-red-700'>*</sup></label>
+         {/* <label htmlFor="">Last Name<sup className='text-red-700'>*</sup></label>
          <br />
          <input
          required 
@@ -78,7 +114,7 @@ const Signup = (props) => {
         className='bg-black px-1 py-1 rounded-sm'
          />
          <br />
-         <br />
+         <br /> */}
          <label htmlFor="email">Email<sup className='text-red-700'>*</sup></label>
          <br />
            <input 
@@ -86,7 +122,7 @@ const Signup = (props) => {
            type="email"
            placeholder="Enter your email id " 
            name="email"
-           id="name"
+           id="email"
            value={FormData.email}
            onChange={changeHandler}
            className='bg-black px-1 py-1 rounded-sm'/>
